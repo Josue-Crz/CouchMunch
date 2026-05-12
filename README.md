@@ -12,6 +12,12 @@ Food delivery apps overwhelm users with too many restaurant and menu choices. Co
 - Mock checkout integration
 - Add-on recommendations
 
+# Current MVP Implementation
+- Frontend Next.js app for entering cravings, using browser location, choosing a budget, viewing ranked combos, selecting add-ons, and creating a mock checkout.
+- Backend Express API with `/api/recommendations`, `/api/checkout`, and `/api/health`.
+- Mock restaurant and menu data in `backend/data/mockMenus.json`.
+- OpenAI craving interpretation is optional. If `OPENAI_API_KEY` is not configured, the API uses a local heuristic interpreter so the demo works immediately.
+
 # Technology Stack
 ## Frontend
 
@@ -145,6 +151,12 @@ cd ../frontend
 npm install
 ```
 
+You can also install both apps from the repository root:
+
+```bash
+npm run install:all
+```
+
 ---
 
 ## 3. Copy Environment File
@@ -166,6 +178,8 @@ cp .env.example .env
 OPENAI_API_KEY=your_openai_api_key
 PORT=5000
 ```
+
+The backend runs without an OpenAI key by using the local fallback interpreter.
 
 ---
 
@@ -195,6 +209,13 @@ Frontend runs on:
 
 ```txt
 http://localhost:3000
+```
+
+Optional frontend environment:
+
+```bash
+cd frontend
+cp .env.example .env.local
 ```
 
 # Revenue Model

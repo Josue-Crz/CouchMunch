@@ -1,0 +1,338 @@
+[
+  {
+    "id": "burger-palace",
+    "name": "Burger Palace",
+    "cuisine": "American",
+    "categories": ["fast_food", "comfort_food", "dessert"],
+    "rating": 4.7,
+    "baseDistanceMiles": 1.2,
+    "deliveryEtaMinutes": 18,
+    "latitude": 34.0529,
+    "longitude": -118.2477,
+    "imageUrl": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80",
+    "menu": [
+      {
+        "id": "bp-double-cheeseburger",
+        "name": "Double Cheeseburger",
+        "price": 8.99,
+        "role": "entree",
+        "tags": ["burger", "beef", "cheese", "cheesy", "comfort", "fast_food", "savory"]
+      },
+      {
+        "id": "bp-crispy-chicken",
+        "name": "Crispy Chicken Sandwich",
+        "price": 8.49,
+        "role": "entree",
+        "tags": ["sandwich", "chicken", "crispy", "comfort", "fast_food", "savory"]
+      },
+      {
+        "id": "bp-large-fries",
+        "name": "Large Fries",
+        "price": 3.49,
+        "role": "side",
+        "tags": ["fries", "crispy", "salty", "fast_food", "comfort"]
+      },
+      {
+        "id": "bp-loaded-fries",
+        "name": "Loaded Palace Fries",
+        "price": 5.99,
+        "role": "side",
+        "tags": ["fries", "loaded", "cheesy", "crispy", "comfort", "shareable"]
+      },
+      {
+        "id": "bp-chocolate-shake",
+        "name": "Chocolate Shake",
+        "price": 4.99,
+        "role": "drink",
+        "tags": ["shake", "milkshake", "chocolate", "sweet", "dessert"]
+      },
+      {
+        "id": "bp-apple-pie",
+        "name": "Hand Pie",
+        "price": 2.79,
+        "role": "dessert",
+        "tags": ["dessert", "sweet", "comfort"]
+      }
+    ]
+  },
+  {
+    "id": "taco-junction",
+    "name": "Taco Junction",
+    "cuisine": "Mexican",
+    "categories": ["mexican", "fast_food", "comfort_food"],
+    "rating": 4.5,
+    "baseDistanceMiles": 1.8,
+    "deliveryEtaMinutes": 21,
+    "latitude": 34.0467,
+    "longitude": -118.2501,
+    "imageUrl": "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=900&q=80",
+    "menu": [
+      {
+        "id": "tj-birria-tacos",
+        "name": "Birria Taco Trio",
+        "price": 10.99,
+        "role": "entree",
+        "tags": ["tacos", "beef", "mexican", "comfort", "savory"]
+      },
+      {
+        "id": "tj-veggie-burrito",
+        "name": "Veggie Crunch Burrito",
+        "price": 8.79,
+        "role": "entree",
+        "tags": ["burrito", "vegetarian", "mexican", "healthy", "savory"]
+      },
+      {
+        "id": "tj-loaded-nachos",
+        "name": "Loaded Nachos",
+        "price": 7.49,
+        "role": "side",
+        "tags": ["nachos", "loaded", "cheesy", "shareable", "comfort", "mexican"]
+      },
+      {
+        "id": "tj-elote-cup",
+        "name": "Street Corn Cup",
+        "price": 3.99,
+        "role": "side",
+        "tags": ["corn", "spicy", "creamy", "mexican", "vegetarian"]
+      },
+      {
+        "id": "tj-agua-fresca",
+        "name": "Watermelon Agua Fresca",
+        "price": 3.25,
+        "role": "drink",
+        "tags": ["drink", "fresh", "sweet", "mexican"]
+      },
+      {
+        "id": "tj-churros",
+        "name": "Cinnamon Churros",
+        "price": 4.25,
+        "role": "dessert",
+        "tags": ["dessert", "sweet", "crispy", "mexican"]
+      }
+    ]
+  },
+  {
+    "id": "pizza-loft",
+    "name": "Pizza Loft",
+    "cuisine": "Pizza",
+    "categories": ["pizza", "comfort_food", "fast_food"],
+    "rating": 4.4,
+    "baseDistanceMiles": 2.1,
+    "deliveryEtaMinutes": 24,
+    "latitude": 34.0495,
+    "longitude": -118.2594,
+    "imageUrl": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=80",
+    "menu": [
+      {
+        "id": "pl-pepperoni-slices",
+        "name": "Pepperoni Slice Duo",
+        "price": 7.99,
+        "role": "entree",
+        "tags": ["pizza", "pepperoni", "cheesy", "comfort", "savory"]
+      },
+      {
+        "id": "pl-margherita",
+        "name": "Margherita Personal Pizza",
+        "price": 10.99,
+        "role": "entree",
+        "tags": ["pizza", "vegetarian", "cheesy", "comfort", "savory"]
+      },
+      {
+        "id": "pl-garlic-knots",
+        "name": "Garlic Knots",
+        "price": 4.49,
+        "role": "side",
+        "tags": ["bread", "garlic", "comfort", "shareable"]
+      },
+      {
+        "id": "pl-buffalo-wings",
+        "name": "Buffalo Wings",
+        "price": 8.25,
+        "role": "side",
+        "tags": ["wings", "spicy", "chicken", "comfort", "shareable"]
+      },
+      {
+        "id": "pl-cola",
+        "name": "Craft Cola",
+        "price": 2.99,
+        "role": "drink",
+        "tags": ["drink", "sweet"]
+      },
+      {
+        "id": "pl-tiramisu",
+        "name": "Tiramisu Cup",
+        "price": 5.5,
+        "role": "dessert",
+        "tags": ["dessert", "sweet", "comfort"]
+      }
+    ]
+  },
+  {
+    "id": "green-bowl-co",
+    "name": "Green Bowl Co.",
+    "cuisine": "Bowls",
+    "categories": ["healthy", "asian", "comfort_food"],
+    "rating": 4.8,
+    "baseDistanceMiles": 1.5,
+    "deliveryEtaMinutes": 19,
+    "latitude": 34.0584,
+    "longitude": -118.2528,
+    "imageUrl": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+    "menu": [
+      {
+        "id": "gb-chicken-bowl",
+        "name": "Grilled Chicken Protein Bowl",
+        "price": 11.99,
+        "role": "entree",
+        "tags": ["bowl", "chicken", "protein", "healthy", "savory"]
+      },
+      {
+        "id": "gb-tofu-bowl",
+        "name": "Teriyaki Tofu Bowl",
+        "price": 10.49,
+        "role": "entree",
+        "tags": ["bowl", "tofu", "vegan", "vegetarian", "healthy", "asian"]
+      },
+      {
+        "id": "gb-kale-caesar",
+        "name": "Kale Caesar Side",
+        "price": 4.99,
+        "role": "side",
+        "tags": ["salad", "greens", "healthy", "vegetarian"]
+      },
+      {
+        "id": "gb-miso-soup",
+        "name": "Miso Soup",
+        "price": 3.49,
+        "role": "side",
+        "tags": ["soup", "healthy", "asian", "comfort"]
+      },
+      {
+        "id": "gb-green-smoothie",
+        "name": "Pineapple Green Smoothie",
+        "price": 5.25,
+        "role": "drink",
+        "tags": ["smoothie", "healthy", "sweet", "vegetarian"]
+      },
+      {
+        "id": "gb-protein-cookie",
+        "name": "Protein Cookie",
+        "price": 3.75,
+        "role": "dessert",
+        "tags": ["dessert", "sweet", "protein", "vegetarian"]
+      }
+    ]
+  },
+  {
+    "id": "noodle-night",
+    "name": "Noodle Night",
+    "cuisine": "Asian",
+    "categories": ["asian", "comfort_food", "fast_food"],
+    "rating": 4.6,
+    "baseDistanceMiles": 2.4,
+    "deliveryEtaMinutes": 26,
+    "latitude": 34.0439,
+    "longitude": -118.2447,
+    "imageUrl": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80",
+    "menu": [
+      {
+        "id": "nn-spicy-ramen",
+        "name": "Spicy Miso Ramen",
+        "price": 12.49,
+        "role": "entree",
+        "tags": ["ramen", "noodles", "spicy", "comfort", "asian"]
+      },
+      {
+        "id": "nn-yakisoba",
+        "name": "Chicken Yakisoba",
+        "price": 10.99,
+        "role": "entree",
+        "tags": ["noodles", "chicken", "savory", "asian"]
+      },
+      {
+        "id": "nn-gyoza",
+        "name": "Crispy Gyoza",
+        "price": 5.75,
+        "role": "side",
+        "tags": ["dumplings", "crispy", "comfort", "asian"]
+      },
+      {
+        "id": "nn-edamame",
+        "name": "Sea Salt Edamame",
+        "price": 4.25,
+        "role": "side",
+        "tags": ["vegan", "vegetarian", "healthy", "asian"]
+      },
+      {
+        "id": "nn-milk-tea",
+        "name": "Brown Sugar Milk Tea",
+        "price": 4.99,
+        "role": "drink",
+        "tags": ["tea", "sweet", "drink", "asian"]
+      },
+      {
+        "id": "nn-mochi",
+        "name": "Mango Mochi",
+        "price": 4.5,
+        "role": "dessert",
+        "tags": ["dessert", "sweet", "asian"]
+      }
+    ]
+  },
+  {
+    "id": "deli-dash",
+    "name": "Deli Dash",
+    "cuisine": "Deli",
+    "categories": ["sandwiches", "healthy", "comfort_food"],
+    "rating": 4.3,
+    "baseDistanceMiles": 0.9,
+    "deliveryEtaMinutes": 16,
+    "latitude": 34.0552,
+    "longitude": -118.2389,
+    "imageUrl": "https://images.unsplash.com/photo-1553909489-cd47e0907980?auto=format&fit=crop&w=900&q=80",
+    "menu": [
+      {
+        "id": "dd-turkey-club",
+        "name": "Turkey Club Sandwich",
+        "price": 9.49,
+        "role": "entree",
+        "tags": ["sandwich", "turkey", "savory", "comfort"]
+      },
+      {
+        "id": "dd-cheesesteak",
+        "name": "Philly Cheesesteak",
+        "price": 10.99,
+        "role": "entree",
+        "tags": ["sandwich", "beef", "cheesy", "comfort", "savory"]
+      },
+      {
+        "id": "dd-tomato-soup",
+        "name": "Tomato Soup",
+        "price": 4.25,
+        "role": "side",
+        "tags": ["soup", "vegetarian", "comfort"]
+      },
+      {
+        "id": "dd-kettle-chips",
+        "name": "Kettle Chips",
+        "price": 2.49,
+        "role": "side",
+        "tags": ["chips", "crispy", "salty"]
+      },
+      {
+        "id": "dd-lemonade",
+        "name": "Fresh Lemonade",
+        "price": 3.25,
+        "role": "drink",
+        "tags": ["drink", "sweet", "fresh"]
+      },
+      {
+        "id": "dd-brownie",
+        "name": "Fudge Brownie",
+        "price": 3.99,
+        "role": "dessert",
+        "tags": ["dessert", "sweet", "chocolate"]
+      }
+    ]
+  }
+]
