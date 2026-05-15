@@ -16,12 +16,20 @@ router.post("/", (request, response) => {
   const selectedAddOns = Array.isArray(request.body?.selectedAddOns)
     ? request.body.selectedAddOns
     : [];
+  const selectedAction =
+    request.body?.selectedAction ||
+    request.body?.selectedProvider ||
+    recommendation.primaryAction ||
+    recommendation.primaryDeliveryProvider ||
+    recommendation.actionOptions?.[0] ||
+    recommendation.deliveryOptions?.[0] ||
+    null;
 
   const subtotal = [...recommendation.items, ...selectedAddOns].reduce(
     (sum, item) => sum + Number(item.price || 0),
     0
   );
-  const deliveryFee = 2.99;
+  const deliveryFee = Number(selectedAction?.deliveryFee || 0);
   const serviceFee = Number((subtotal * 0.08).toFixed(2));
   const total = Number((subtotal + deliveryFee + serviceFee).toFixed(2));
   const checkoutId = crypto.randomUUID();
@@ -30,6 +38,8 @@ router.post("/", (request, response) => {
     checkoutId,
     status: "mock_checkout_created",
     restaurant: recommendation.restaurant,
+    selectedAction,
+    selectedProvider: selectedAction,
     items: recommendation.items,
     selectedAddOns,
     subtotal: Number(subtotal.toFixed(2)),

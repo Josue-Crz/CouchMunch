@@ -1,4 +1,12 @@
-import OpenAI from "openai";
+import {
+  createOpenAIClient,
+  extractResponseText,
+  getAiRecommendationMode,
+  getOpenAIModel,
+  getRequestedAiProvider,
+  hasOpenAICredentials,
+  shouldUseOpenAI
+} from "./openAiClient.js";
 
 const FOOD_PATTERNS = [
   {
@@ -72,42 +80,98 @@ const MOODS = [
   { mood: "crispy", terms: ["crispy", "crunchy", "fried"] }
 ];
 
+const INTERPRETATION_SCHEMA = {
+  type: "object",
+  properties: {
+    items: {
+      type: "array",
+      items: { type: "string" }
+    },
+    category: { type: "string" },
+    priority: {
+      type: "string",
+      enum: ["combo_match", "cheapest", "munch_mode"]
+    },
+    mood: {
+      type: "array",
+      items: { type: "string" }
+    },
+    budget: {
+      type: "string",
+      enum: ["low", "standard", "high"]
+    },
+    maxBudget: {
+      anyOf: [{ type: "number" }, { type: "null" }]
+    },
+    dietary: {
+      type: "array",
+      items: { type: "string" }
+    }
+  },
+  required: ["items", "category", "priority", "mood", "budget", "maxBudget", "dietary"],
+  additionalProperties: false
+};
+
 export async function interpretCraving(rawCraving) {
   const fallback = interpretLocally(rawCraving);
 
   if (!shouldUseOpenAI()) {
-    return fallback;
+    return sanitizeInterpretation({
+      ...fallback,
+      fallbackUsed: getRequestedAiProvider() !== "local",
+      fallbackReason:
+        getRequestedAiProvider() === "local"
+          ? null
+          : "OpenAI credentials are not configured."
+    });
   }
 
   try {
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const completion = await client.chat.completions.create({
-      model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content:
-            "You interpret food cravings for a restaurant recommendation app. Return compact JSON with items, category, priority, mood, budget, maxBudget, and dietary. Items should be simple food nouns."
-        },
-        {
-          role: "user",
-          content: rawCraving
-        }
-      ]
-    });
-
-    const parsed = JSON.parse(completion.choices?.[0]?.message?.content || "{}");
+    const parsed = await interpretWithOpenAI(rawCraving);
     return sanitizeInterpretation({
       ...fallback,
       ...parsed,
       rawCraving,
+      source: "openai",
+      model: getOpenAIModel(),
       aiPowered: true
     });
   } catch (error) {
     console.warn("OpenAI interpretation failed, using local fallback:", error.message);
-    return fallback;
+    return sanitizeInterpretation({
+      ...fallback,
+      fallbackUsed: true,
+      fallbackReason: error.message
+    });
   }
+}
+
+export function getAiProviderStatus() {
+  const requestedProvider = getRequestedAiProvider();
+  const openaiConfigured = hasOpenAICredentials();
+  const activeProvider =
+    requestedProvider !== "local" && openaiConfigured ? "openai" : "local_heuristic";
+
+  return {
+    requestedProvider,
+    activeProvider,
+    fallbackProvider: "local_heuristic",
+    openai: {
+      credentialsConfigured: openaiConfigured,
+      credentialEnv: "OPENAI_API_KEY",
+      model: getOpenAIModel(),
+      endpointFamily: "responses"
+    },
+    recommendations: {
+      requestedMode: getAiRecommendationMode(),
+      activeProvider:
+        requestedProvider !== "local" &&
+        getAiRecommendationMode() !== "local" &&
+        openaiConfigured
+          ? "openai"
+          : "local_engine"
+    }
+  };
 }
 
 function interpretLocally(rawCraving) {
@@ -136,13 +200,35 @@ function interpretLocally(rawCraving) {
     maxBudget: inferMaxBudget(text),
     dietary: inferDietary(text),
     rawCraving,
-    aiPowered: false
+    source: "local_heuristic",
+    model: "local-rules",
+    aiPowered: false,
+    fallbackUsed: false,
+    fallbackReason: null
   });
 }
 
-function shouldUseOpenAI() {
-  const key = process.env.OPENAI_API_KEY;
-  return Boolean(key && !key.includes("your_openai_api_key"));
+async function interpretWithOpenAI(rawCraving) {
+  const client = createOpenAIClient();
+  const response = await client.responses.create({
+    model: getOpenAIModel(),
+    instructions:
+      "You interpret food cravings for a restaurant recommendation app. Return structured food intent only. Items should be simple food nouns. Category should be a concise cuisine or meal category. Priority must reflect whether the user wants best combo match, cheapest option, or a bigger indulgent order.",
+    input: `Craving: ${rawCraving}`,
+    max_output_tokens: 400,
+    temperature: 0.2,
+    text: {
+      format: {
+        type: "json_schema",
+        name: "food_craving_interpretation",
+        description: "Structured food craving intent for CouchMunch recommendations.",
+        schema: INTERPRETATION_SCHEMA,
+        strict: false
+      }
+    }
+  });
+
+  return JSON.parse(extractResponseText(response));
 }
 
 function sanitizeInterpretation(interpretation) {
@@ -165,7 +251,11 @@ function sanitizeInterpretation(interpretation) {
     maxBudget: interpretation.maxBudget || null,
     dietary: [...new Set(dietary)],
     rawCraving: interpretation.rawCraving,
-    aiPowered: Boolean(interpretation.aiPowered)
+    source: interpretation.source || "local_heuristic",
+    model: interpretation.model || "local-rules",
+    aiPowered: Boolean(interpretation.aiPowered),
+    fallbackUsed: Boolean(interpretation.fallbackUsed),
+    fallbackReason: interpretation.fallbackReason || null
   };
 }
 

@@ -10,6 +10,38 @@
     "latitude": 34.0529,
     "longitude": -118.2477,
     "imageUrl": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80",
+    "deliveryProviders": [
+      {
+        "key": "doordash",
+        "name": "DoorDash",
+        "available": true,
+        "serviceRadiusMiles": 6,
+        "deliveryFee": 2.99,
+        "minimumOrder": 12,
+        "etaAdjustmentMinutes": 0,
+        "orderUrl": "https://www.doordash.com"
+      },
+      {
+        "key": "ubereats",
+        "name": "Uber Eats",
+        "available": true,
+        "serviceRadiusMiles": 7,
+        "deliveryFee": 3.49,
+        "minimumOrder": 10,
+        "etaAdjustmentMinutes": 3,
+        "orderUrl": "https://www.ubereats.com"
+      },
+      {
+        "key": "grubhub",
+        "name": "Grubhub",
+        "available": true,
+        "serviceRadiusMiles": 5,
+        "deliveryFee": 2.49,
+        "minimumOrder": 15,
+        "etaAdjustmentMinutes": 2,
+        "orderUrl": "https://www.grubhub.com"
+      }
+    ],
     "menu": [
       {
         "id": "bp-double-cheeseburger",
@@ -66,6 +98,28 @@
     "latitude": 34.0467,
     "longitude": -118.2501,
     "imageUrl": "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=900&q=80",
+    "deliveryProviders": [
+      {
+        "key": "doordash",
+        "name": "DoorDash",
+        "available": true,
+        "serviceRadiusMiles": 6,
+        "deliveryFee": 1.99,
+        "minimumOrder": 10,
+        "etaAdjustmentMinutes": 1,
+        "orderUrl": "https://www.doordash.com"
+      },
+      {
+        "key": "grubhub",
+        "name": "Grubhub",
+        "available": true,
+        "serviceRadiusMiles": 5,
+        "deliveryFee": 2.99,
+        "minimumOrder": 12,
+        "etaAdjustmentMinutes": 4,
+        "orderUrl": "https://www.grubhub.com"
+      }
+    ],
     "menu": [
       {
         "id": "tj-birria-tacos",
@@ -122,6 +176,38 @@
     "latitude": 34.0495,
     "longitude": -118.2594,
     "imageUrl": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=900&q=80",
+    "deliveryProviders": [
+      {
+        "key": "doordash",
+        "name": "DoorDash",
+        "available": true,
+        "serviceRadiusMiles": 5,
+        "deliveryFee": 3.99,
+        "minimumOrder": 14,
+        "etaAdjustmentMinutes": 2,
+        "orderUrl": "https://www.doordash.com"
+      },
+      {
+        "key": "ubereats",
+        "name": "Uber Eats",
+        "available": true,
+        "serviceRadiusMiles": 7,
+        "deliveryFee": 2.99,
+        "minimumOrder": 12,
+        "etaAdjustmentMinutes": 1,
+        "orderUrl": "https://www.ubereats.com"
+      },
+      {
+        "key": "postmates",
+        "name": "Postmates",
+        "available": true,
+        "serviceRadiusMiles": 6,
+        "deliveryFee": 3.49,
+        "minimumOrder": 12,
+        "etaAdjustmentMinutes": 5,
+        "orderUrl": "https://postmates.com"
+      }
+    ],
     "menu": [
       {
         "id": "pl-pepperoni-slices",
@@ -178,6 +264,38 @@
     "latitude": 34.0584,
     "longitude": -118.2528,
     "imageUrl": "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80",
+    "deliveryProviders": [
+      {
+        "key": "doordash",
+        "name": "DoorDash",
+        "available": true,
+        "serviceRadiusMiles": 6,
+        "deliveryFee": 2.49,
+        "minimumOrder": 12,
+        "etaAdjustmentMinutes": 2,
+        "orderUrl": "https://www.doordash.com"
+      },
+      {
+        "key": "grubhub",
+        "name": "Grubhub",
+        "available": true,
+        "serviceRadiusMiles": 5,
+        "deliveryFee": 1.99,
+        "minimumOrder": 15,
+        "etaAdjustmentMinutes": 0,
+        "orderUrl": "https://www.grubhub.com"
+      },
+      {
+        "key": "ubereats",
+        "name": "Uber Eats",
+        "available": true,
+        "serviceRadiusMiles": 7,
+        "deliveryFee": 2.99,
+        "minimumOrder": 10,
+        "etaAdjustmentMinutes": 3,
+        "orderUrl": "https://www.ubereats.com"
+      }
+    ],
     "menu": [
       {
         "id": "gb-chicken-bowl",
@@ -234,6 +352,38 @@
     "latitude": 34.0439,
     "longitude": -118.2447,
     "imageUrl": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=900&q=80",
+    "deliveryProviders": [
+      {
+        "key": "grubhub",
+        "name": "Grubhub",
+        "available": true,
+        "serviceRadiusMiles": 6,
+        "deliveryFee": 2.49,
+        "minimumOrder": 13,
+        "etaAdjustmentMinutes": 1,
+        "orderUrl": "https://www.grubhub.com"
+      },
+      {
+        "key": "ubereats",
+        "name": "Uber Eats",
+        "available": true,
+        "serviceRadiusMiles": 7,
+        "deliveryFee": 3.49,
+        "minimumOrder": 11,
+        "etaAdjustmentMinutes": 2,
+        "orderUrl": "https://www.ubereats.com"
+      },
+      {
+        "key": "doordash",
+        "name": "DoorDash",
+        "available": true,
+        "serviceRadiusMiles": 4,
+        "deliveryFee": 2.99,
+        "minimumOrder": 12,
+        "etaAdjustmentMinutes": 4,
+        "orderUrl": "https://www.doordash.com"
+      }
+    ],
     "menu": [
       {
         "id": "nn-spicy-ramen",
@@ -290,6 +440,28 @@
     "latitude": 34.0552,
     "longitude": -118.2389,
     "imageUrl": "https://images.unsplash.com/photo-1553909489-cd47e0907980?auto=format&fit=crop&w=900&q=80",
+    "deliveryProviders": [
+      {
+        "key": "doordash",
+        "name": "DoorDash",
+        "available": true,
+        "serviceRadiusMiles": 5,
+        "deliveryFee": 1.99,
+        "minimumOrder": 9,
+        "etaAdjustmentMinutes": 0,
+        "orderUrl": "https://www.doordash.com"
+      },
+      {
+        "key": "grubhub",
+        "name": "Grubhub",
+        "available": true,
+        "serviceRadiusMiles": 6,
+        "deliveryFee": 2.49,
+        "minimumOrder": 10,
+        "etaAdjustmentMinutes": 3,
+        "orderUrl": "https://www.grubhub.com"
+      }
+    ],
     "menu": [
       {
         "id": "dd-turkey-club",

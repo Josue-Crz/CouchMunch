@@ -1,5 +1,12 @@
 import { Router } from "express";
+import {
+  rankRecommendationsWithAI
+} from "../services/aiRecommendationRanker.js";
 import { interpretCraving } from "../services/cravingInterpreter.js";
+import {
+  findNearbyRestaurants,
+  summarizeRestaurant
+} from "../services/yelpFusion.js";
 import {
   buildRecommendations,
   normalizeLocation
@@ -20,18 +27,36 @@ router.post("/", async (request, response, next) => {
 
     const interpretation = await interpretCraving(craving);
     const location = normalizeLocation(request.body?.location);
-    const recommendations = buildRecommendations({
+    const nearbyRestaurants = await findNearbyRestaurants({
+      interpretation,
+      location,
+      openNow: request.body?.openNow
+    });
+    const localRecommendations = buildRecommendations({
       budget: request.body?.budget,
       interpretation,
       location,
-      mode: request.body?.mode
+      mode: request.body?.mode,
+      restaurants: nearbyRestaurants.items
+    });
+    const rankedRecommendations = await rankRecommendationsWithAI({
+      budget: request.body?.budget,
+      craving,
+      fallbackRecommendations: localRecommendations,
+      interpretation,
+      location,
+      mode: request.body?.mode,
+      restaurants: nearbyRestaurants.items
     });
 
     response.json({
       query: craving,
       interpretation,
       location,
-      recommendations
+      source: nearbyRestaurants.source,
+      ranking: rankedRecommendations.ranking,
+      nearbyRestaurants: nearbyRestaurants.items.map(summarizeRestaurant),
+      recommendations: rankedRecommendations.recommendations
     });
   } catch (error) {
     next(error);

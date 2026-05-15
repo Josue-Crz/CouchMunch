@@ -1,8 +1,10 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import aiRouter from "./routes/ai.js";
 import checkoutRouter from "./routes/checkout.js";
 import recommendationsRouter from "./routes/recommendations.js";
+import restaurantsRouter from "./routes/restaurants.js";
 
 dotenv.config();
 
@@ -20,6 +22,8 @@ app.get("/api/health", (_request, response) => {
   });
 });
 
+app.use("/api/ai", aiRouter);
+app.use("/api/restaurants", restaurantsRouter);
 app.use("/api/recommendations", recommendationsRouter);
 app.use("/api/checkout", checkoutRouter);
 

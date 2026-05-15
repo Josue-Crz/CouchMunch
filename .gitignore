@@ -12,3 +12,6 @@ yarn-debug.log*
 yarn-error.log*
 
 .DS_Store
+
+DEPLOYMENT_RUNBOOK.md
+ENDPOINT_SETUP_INSTRUCTIONS.txt

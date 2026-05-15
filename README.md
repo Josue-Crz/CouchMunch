@@ -1,22 +1,31 @@
 # CouchMunch
-CouchMunch is an AI-powered food recommendation app that turns cravings into nearby meal combos. Users enter foods they want, and the app instantly suggests curated fast-food or restaurant orders, reducing delivery-app choice overload and making ordering faster.
+CouchMunch is an AI-powered food recommendation app that turns cravings into nearby meal combos. Users enter foods they want plus a location, and the app suggests nearby restaurants with curated order ideas.
 
 # Problem
-Food delivery apps overwhelm users with too many restaurant and menu choices. CouchMunch reduces decision fatigue by using AI to instantly recommend curated meal combos based on user cravings.
+Food apps overwhelm users with too many restaurant and menu choices. CouchMunch reduces decision fatigue by using AI to interpret cravings, Yelp Fusion to find nearby restaurants, and a lightweight combo engine to suggest what to order.
 
 # MVP Features:
 - AI craving interpretation
-- Nearby restaurant matching
+- Yelp-powered nearby restaurant matching
 - Combo recommendation engine
 - Best Match / Cheapest / Munch Mode suggestions
 - Mock checkout integration
 - Add-on recommendations
 
+# Recommendation Modes
+- Best Match - Best AI interpretation of what the user is craving and what is nearby.
+- Cheapest - Cheapest option based on the AI interpretation of the user's craving.
+- Munch Mode - The best of both worlds: affordable, great ratings, relatively nearby, and the closest CouchMunch interpretation of what the user wants.
+
 # Current MVP Implementation
 - Frontend Next.js app for entering cravings, using browser location, choosing a budget, viewing ranked combos, selecting add-ons, and creating a mock checkout.
 - Backend Express API with `/api/recommendations`, `/api/checkout`, and `/api/health`.
-- Mock restaurant and menu data in `backend/data/mockMenus.json`.
-- OpenAI craving interpretation is optional. If `OPENAI_API_KEY` is not configured, the API uses a local heuristic interpreter so the demo works immediately.
+- Yelp Fusion restaurant endpoints for credential status and nearby restaurant search.
+- AI endpoints for status checks and standalone craving interpretation.
+- Yelp Fusion is optional. If `YELP_API_KEY` is not configured, the API uses mock restaurant data in `backend/data/mockMenus.json`.
+- OpenAI craving interpretation and post-Yelp restaurant ranking are optional. If `OPENAI_API_KEY` is not configured, the API uses local heuristic interpretation and ranking so the demo works immediately.
+- Endpoint connection details are documented in `ENDPOINT_SETUP_INSTRUCTIONS.txt`.
+- Local verification and cloud deployment steps are documented in `DEPLOYMENT_RUNBOOK.md`.
 
 # Technology Stack
 ## Frontend
@@ -46,7 +55,7 @@ Food delivery apps overwhelm users with too many restaurant and menu choices. Co
 
 ## APIs
 
-![DoorDash](https://img.shields.io/badge/Mock_DoorDash_Data-FF3008?style=flat)
+![Yelp](https://img.shields.io/badge/Yelp_Fusion-FF1A1A?style=flat&logo=yelp)
 ![Geolocation](https://img.shields.io/badge/Browser_Geolocation_API-4285F4?style=flat&logo=googlemaps)
 
 # System Architecture
@@ -60,7 +69,7 @@ flowchart TD
     D --> E[Structured Food Intent]
 
     C --> F[Location Service]
-    F --> G[Nearby Restaurants]
+    F --> G[Yelp Nearby Restaurants]
 
     C --> H[Menu Data Source]
     H --> I[Menu Matching Engine]
@@ -176,10 +185,16 @@ cp .env.example .env
 
 ```env
 OPENAI_API_KEY=your_openai_api_key
+OPENAI_MODEL=gpt-4o-mini
+AI_PROVIDER=auto
+AI_RECOMMENDATION_MODE=auto
+RESTAURANT_DATA_SOURCE=auto
+YELP_API_KEY=your_yelp_fusion_api_key
+YELP_SEARCH_RADIUS_METERS=8000
 PORT=5000
 ```
 
-The backend runs without an OpenAI key by using the local fallback interpreter.
+The backend runs without OpenAI or Yelp keys by using local fallback interpretation and mock restaurant data.
 
 ---
 

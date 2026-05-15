@@ -4,6 +4,7 @@ import {
   BadgeDollarSign,
   Check,
   ChefHat,
+  ExternalLink,
   Flame,
   Loader2,
   MapPin,
@@ -14,6 +15,7 @@ import {
   SlidersHorizontal,
   Sparkles,
   Star,
+  Store,
   X
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -43,9 +45,11 @@ const budgetOptions = [
 
 export default function Home() {
   const [craving, setCraving] = useState(DEFAULT_CRAVING);
-  const [location, setLocation] = useState({ label: "Demo delivery zone" });
+  const [locationInput, setLocationInput] = useState("Los Angeles, CA");
+  const [location, setLocation] = useState({ label: "Los Angeles, CA" });
   const [budget, setBudget] = useState("standard");
   const [mode, setMode] = useState("all");
+  const [openNow, setOpenNow] = useState(false);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [geoLoading, setGeoLoading] = useState(false);
@@ -70,9 +74,15 @@ export default function Home() {
 
   async function submitCraving(nextCraving = craving) {
     const cleanedCraving = nextCraving.trim();
+    const requestLocation = normalizeRequestLocation(locationInput, location);
 
     if (!cleanedCraving) {
       setError("Add a craving first.");
+      return;
+    }
+
+    if (!requestLocation.label && !requestLocation.latitude) {
+      setError("Add a delivery location first.");
       return;
     }
 
@@ -86,9 +96,10 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           craving: cleanedCraving,
-          location,
+          location: requestLocation,
           budget,
-          mode
+          mode,
+          openNow
         })
       });
 
@@ -99,6 +110,7 @@ export default function Home() {
       }
 
       setCraving(cleanedCraving);
+      setLocation(requestLocation);
       setResult(payload);
       setSelectedAddOns({});
     } catch (requestError) {
@@ -124,6 +136,7 @@ export default function Home() {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         });
+        setLocationInput("Current location");
         setGeoLoading(false);
       },
       () => {
@@ -159,6 +172,7 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           recommendation,
+          selectedAction: recommendation.primaryAction,
           selectedAddOns: selectedAddOns[recommendation.restaurantId] || []
         })
       });
@@ -225,6 +239,19 @@ export default function Home() {
                 />
               </label>
 
+              <label className="block">
+                <span className="text-sm font-semibold text-stone-800">Delivery location</span>
+                <input
+                  className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-stone-50 px-3 text-base text-stone-950 outline-none ring-[#ff5a3c]/25 transition focus:border-[#ff5a3c] focus:ring-4"
+                  value={locationInput}
+                  onChange={(event) => {
+                    setLocationInput(event.target.value);
+                    setLocation({ label: event.target.value });
+                  }}
+                  placeholder="City, ZIP, or address"
+                />
+              </label>
+
               <div>
                 <span className="text-sm font-semibold text-stone-800">Quick picks</span>
                 <div className="mt-2 grid gap-2">
@@ -239,6 +266,27 @@ export default function Home() {
                       <Search className="h-4 w-4 shrink-0 text-stone-500" aria-hidden="true" />
                     </button>
                   ))}
+                </div>
+              </div>
+
+              <div>
+                <span className="text-sm font-semibold text-stone-800">Nearby source</span>
+                <div className="mt-2 grid grid-cols-[1fr_auto] gap-2">
+                  <div className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md border border-teal-700 bg-teal-700 px-3 text-sm font-semibold text-white">
+                    <Store className="h-4 w-4" aria-hidden="true" />
+                    Yelp Fusion
+                  </div>
+                  <button
+                    className={`inline-flex min-h-10 items-center justify-center rounded-md border px-3 text-sm font-semibold transition ${
+                      openNow
+                        ? "border-[#ff5a3c] bg-[#ff5a3c] text-white"
+                        : "border-stone-200 bg-white text-stone-700 hover:border-[#ff5a3c]"
+                    }`}
+                    type="button"
+                    onClick={() => setOpenNow((current) => !current)}
+                  >
+                    Open now
+                  </button>
                 </div>
               </div>
 
@@ -358,7 +406,9 @@ export default function Home() {
                       Mock checkout ready
                     </div>
                     <p className="mt-1 text-sm">
-                      {checkout.restaurant} total: {formatPrice(checkout.total)}. ETA:{" "}
+                      {checkout.restaurant}
+                      {checkout.selectedAction?.name ? ` via ${checkout.selectedAction.name}` : ""}{" "}
+                      total: {formatPrice(checkout.total)}. ETA:{" "}
                       {checkout.estimatedArrivalMinutes} min.
                     </p>
                   </div>
@@ -388,6 +438,17 @@ export default function Home() {
                     />
                   ))}
             </div>
+            {!loading && result && recommendations.length === 0 && (
+              <div className="rounded-md border border-stone-200 bg-white p-6 text-stone-700 shadow-panel">
+                <div className="flex items-center gap-2 font-bold text-stone-950">
+                  <Store className="h-5 w-5 text-teal-700" aria-hidden="true" />
+                  No nearby restaurants found
+                </div>
+                <p className="mt-2 text-sm">
+                  Try a nearby city, ZIP code, broader craving, or turn off Open now.
+                </p>
+              </div>
+            )}
           </section>
         </section>
       </div>
@@ -425,6 +486,12 @@ function RecommendationCard({
           >
             {recommendation.type}
           </span>
+          {recommendation.aiRanked && (
+            <span className="inline-flex items-center gap-1 rounded-md bg-white px-2.5 py-1 text-xs font-black text-teal-800">
+              <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+              AI ranked
+            </span>
+          )}
         </div>
       </div>
 
@@ -438,8 +505,26 @@ function RecommendationCard({
                 <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" aria-hidden="true" />
                 {recommendation.rating}
               </span>
+              {recommendation.reviewCount && <span>{recommendation.reviewCount} reviews</span>}
+              {recommendation.price && <span>{recommendation.price}</span>}
               <span>{recommendation.distanceMiles} mi</span>
               <span>{recommendation.deliveryEtaMinutes} min</span>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {(recommendation.actionOptions || []).map((action) => (
+                <span
+                  className="inline-flex items-center gap-1 rounded bg-teal-50 px-2 py-1 text-[0.7rem] font-bold text-teal-800"
+                  key={action.key}
+                >
+                  <Store className="h-3 w-3" aria-hidden="true" />
+                  {action.name}
+                </span>
+              ))}
+              {recommendation.isClosed && (
+                <span className="rounded bg-stone-100 px-2 py-1 text-[0.7rem] font-bold text-stone-600">
+                  Closed
+                </span>
+              )}
             </div>
           </div>
           <div className="rounded-md bg-stone-100 px-2.5 py-2 text-right">
@@ -451,6 +536,11 @@ function RecommendationCard({
         <p className="mt-3 min-h-12 text-sm leading-6 text-stone-600">
           {recommendation.matchReason}
         </p>
+        {recommendation.address && (
+          <div className="mt-1 text-xs font-semibold text-stone-500">
+            {recommendation.address}
+          </div>
+        )}
 
         <div className="mt-4 space-y-2">
           {recommendation.items.map((item) => (
@@ -499,7 +589,18 @@ function RecommendationCard({
           </div>
         </div>
 
-        <div className="mt-auto pt-4">
+        <div className="mt-auto grid gap-2 pt-4">
+          {recommendation.businessUrl && (
+            <a
+              className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-md border border-stone-300 bg-white px-4 font-bold text-stone-900 transition hover:border-teal-700"
+              href={recommendation.businessUrl}
+              rel="noreferrer"
+              target="_blank"
+            >
+              <ExternalLink className="h-4 w-4" aria-hidden="true" />
+              View on Yelp
+            </a>
+          )}
           <button
             className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-stone-950 px-4 font-bold text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:bg-stone-300"
             type="button"
@@ -517,6 +618,22 @@ function RecommendationCard({
       </div>
     </article>
   );
+}
+
+function normalizeRequestLocation(locationInput, location) {
+  const label = locationInput.trim();
+
+  if (
+    Number.isFinite(location.latitude) &&
+    Number.isFinite(location.longitude) &&
+    location.label === locationInput
+  ) {
+    return location;
+  }
+
+  return {
+    label
+  };
 }
 
 function formatPrice(value) {

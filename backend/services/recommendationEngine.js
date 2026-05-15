@@ -46,14 +46,24 @@ export function normalizeLocation(location) {
   };
 }
 
-export function buildRecommendations({ budget, interpretation, location, mode }) {
+export function buildRecommendations({
+  budget,
+  interpretation,
+  location,
+  mode,
+  restaurants: availableRestaurants = restaurants
+}) {
   const selectedMode = String(mode || "all").toLowerCase();
   const activeModes =
     selectedMode === "all"
       ? MODE_CONFIG
       : MODE_CONFIG.filter((config) => config.key === selectedMode);
 
-  const candidates = restaurants.map((restaurant) =>
+  if (!availableRestaurants.length) {
+    return [];
+  }
+
+  const candidates = availableRestaurants.map((restaurant) =>
     buildRestaurantCandidate({
       budget,
       interpretation,
@@ -68,9 +78,32 @@ export function buildRecommendations({ budget, interpretation, location, mode })
   });
 }
 
+export function buildRecommendationForRestaurant({
+  budget,
+  interpretation,
+  location,
+  mode,
+  restaurant
+}) {
+  const selectedMode = String(mode || "best").toLowerCase();
+  const config =
+    MODE_CONFIG.find((modeConfig) => modeConfig.key === selectedMode) ||
+    MODE_CONFIG[0];
+  const candidate = buildRestaurantCandidate({
+    budget,
+    interpretation,
+    location,
+    restaurant
+  });
+
+  return formatRecommendation(config, candidate, interpretation);
+}
+
 function buildRestaurantCandidate({ budget, interpretation, location, restaurant }) {
   const menu = applyDietaryFilter(restaurant.menu, interpretation.dietary);
-  const distanceMiles = getDistanceMiles(location, restaurant);
+  const distanceMiles = Number.isFinite(restaurant.distanceMiles)
+    ? restaurant.distanceMiles
+    : getDistanceMiles(location, restaurant);
   const combo = selectCombo(menu, interpretation, "best");
   const cheapCombo = selectCombo(menu, interpretation, "cheap");
   const munchCombo = selectCombo(menu, interpretation, "munch");
@@ -131,7 +164,12 @@ function formatRecommendation(config, candidate, interpretation) {
         ? candidate.munchCombo
         : candidate.combo;
   const estimatedPrice = Number(comboTotal(combo).toFixed(2));
-  const eta = candidate.restaurant.deliveryEtaMinutes + Math.round(candidate.distanceMiles * 2);
+  const actionOptions =
+    candidate.restaurant.actionOptions || candidate.restaurant.deliveryOptions || [];
+  const primaryAction = actionOptions[0] || null;
+  const eta =
+    primaryAction?.estimatedEtaMinutes ||
+    candidate.restaurant.deliveryEtaMinutes + Math.round(candidate.distanceMiles * 2);
   const matchedItems = findMatchedItems(combo, interpretation);
 
   return {
@@ -143,8 +181,17 @@ function formatRecommendation(config, candidate, interpretation) {
     cuisine: candidate.restaurant.cuisine,
     imageUrl: candidate.restaurant.imageUrl,
     rating: candidate.restaurant.rating,
+    reviewCount: candidate.restaurant.reviewCount || null,
+    price: candidate.restaurant.price || null,
+    address: candidate.restaurant.address || null,
+    businessUrl: candidate.restaurant.businessUrl || null,
+    source: candidate.restaurant.source || "mock_restaurants",
+    sourceLabel: candidate.restaurant.sourceLabel || "Demo",
+    isClosed: Boolean(candidate.restaurant.isClosed),
     distanceMiles: Number(candidate.distanceMiles.toFixed(1)),
     deliveryEtaMinutes: eta,
+    actionOptions,
+    primaryAction,
     combo: combo.map((item) => item.name),
     items: combo.map((item) => ({
       id: item.id,
@@ -159,7 +206,8 @@ function formatRecommendation(config, candidate, interpretation) {
     addOns: recommendAddOns(candidate.restaurant.menu, combo, interpretation, config.key),
     mockCheckout: {
       endpoint: "/api/checkout",
-      method: "POST"
+      method: "POST",
+      actionKey: primaryAction?.key || null
     }
   };
 }
