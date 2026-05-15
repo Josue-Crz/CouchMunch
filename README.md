@@ -46,10 +46,10 @@ Food apps overwhelm users with too many restaurant and menu choices. CouchMunch 
 
 
 
-## Database
+<!--## Database
 
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=flat&logo=supabase)
-![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=firebase)
+![Firebase](https://img.shields.io/badge/Firebase-FFCA28?style=flat&logo=firebase)-->
 
 
 
