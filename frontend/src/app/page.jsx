@@ -23,6 +23,7 @@ import { useEffect, useMemo, useState } from "react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 const DEFAULT_CRAVING = "burger fries and a chocolate shake";
+const DEFAULT_LOCATION_LABEL = "San Francisco, California";
 const COPYRIGHT_YEAR = "2026";
 const GITHUB_REPOSITORY_URL =
   process.env.NEXT_PUBLIC_GITHUB_REPOSITORY_URL || "https://github.com/Josue-Crz/CouchMunch";
@@ -51,8 +52,8 @@ const budgetOptions = [
 
 export default function Home() {
   const [craving, setCraving] = useState(DEFAULT_CRAVING);
-  const [locationInput, setLocationInput] = useState("Los Angeles, CA");
-  const [location, setLocation] = useState({ label: "Los Angeles, CA" });
+  const [locationInput, setLocationInput] = useState(DEFAULT_LOCATION_LABEL);
+  const [location, setLocation] = useState({ label: DEFAULT_LOCATION_LABEL });
   const [budget, setBudget] = useState("standard");
   const [mode, setMode] = useState("all");
   const [openNow, setOpenNow] = useState(false);
@@ -276,7 +277,7 @@ export default function Home() {
                     setLocationInput(event.target.value);
                     setLocation({ label: event.target.value });
                   }}
-                  placeholder="City, ZIP, or address"
+                  placeholder={DEFAULT_LOCATION_LABEL}
                 />
               </label>
 
