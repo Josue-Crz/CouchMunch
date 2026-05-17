@@ -233,6 +233,8 @@ cd frontend
 cp .env.example .env.local
 ```
 
+Set `NEXT_PUBLIC_GITHUB_REPOSITORY_URL` in `frontend/.env.local` if the public repository URL changes.
+
 # Revenue Model
 - Sponsored restaurant placements
 - Affiliate delivery links
@@ -246,3 +248,8 @@ cp .env.example .env.local
 - Budget filtering
 - Late-night food mode
 - AI meal ranking
+
+# License
+Copyright (c) 2026 Josue Cruz.
+
+CouchMunch is open source under the MIT License. See [LICENSE](LICENSE) for details.

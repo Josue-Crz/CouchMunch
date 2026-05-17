@@ -1,8 +1,4 @@
-import { readFileSync } from "node:fs";
-
-const restaurants = JSON.parse(
-  readFileSync(new URL("../data/mockMenus.json", import.meta.url), "utf8")
-);
+import restaurants from "../data/mockMenus.json" with { type: "json" };
 
 const MODE_CONFIG = [
   {

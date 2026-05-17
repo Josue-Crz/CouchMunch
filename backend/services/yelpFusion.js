@@ -1,8 +1,4 @@
-import { readFileSync } from "node:fs";
-
-const mockRestaurants = JSON.parse(
-  readFileSync(new URL("../data/mockMenus.json", import.meta.url), "utf8")
-);
+import mockRestaurants from "../data/mockMenus.json" with { type: "json" };
 
 const YELP_BASE_URL = "https://api.yelp.com/v3";
 const DEFAULT_SEARCH_RADIUS_METERS = 8000;

@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "couchmunch-api",
+  "main": "worker.js",
+  "compatibility_date": "2026-05-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "NODE_ENV": "production",
+    "AI_PROVIDER": "auto",
+    "AI_RECOMMENDATION_MODE": "auto",
+    "OPENAI_MODEL": "gpt-4o-mini",
+    "RESTAURANT_DATA_SOURCE": "auto",
+    "YELP_SEARCH_RADIUS_METERS": "8000"
+  }
+}

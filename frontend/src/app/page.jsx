@@ -6,6 +6,7 @@ import {
   ChefHat,
   ExternalLink,
   Flame,
+  Github,
   Loader2,
   MapPin,
   Navigation,
@@ -22,6 +23,9 @@ import { useEffect, useMemo, useState } from "react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 const DEFAULT_CRAVING = "burger fries and a chocolate shake";
+const COPYRIGHT_YEAR = "2026";
+const GITHUB_REPOSITORY_URL =
+  process.env.NEXT_PUBLIC_GITHUB_REPOSITORY_URL || "https://github.com/Josue-Crz/CouchMunch";
 
 const sampleCravings = [
   "spicy ramen and crispy dumplings",
@@ -451,6 +455,24 @@ export default function Home() {
             )}
           </section>
         </section>
+
+        <footer className="flex flex-col gap-3 border-t border-stone-200 pt-5 text-sm text-stone-600 sm:flex-row sm:items-center sm:justify-between">
+          <p className="font-semibold text-stone-700">
+            &copy; {COPYRIGHT_YEAR} Josue Cruz. Open source under the MIT License.
+          </p>
+          <a
+            className="inline-flex min-h-11 w-fit items-center justify-center gap-2 rounded-md border border-stone-300 bg-white px-4 font-bold text-stone-900 shadow-sm transition hover:border-stone-950 hover:bg-stone-950 hover:text-white"
+            href={GITHUB_REPOSITORY_URL}
+            rel="noreferrer"
+            target="_blank"
+            title="View CouchMunch on GitHub"
+            aria-label="View CouchMunch on GitHub"
+          >
+            <Github className="h-4 w-4" aria-hidden="true" />
+            GitHub repository
+            <ExternalLink className="h-4 w-4" aria-hidden="true" />
+          </a>
+        </footer>
       </div>
     </main>
   );
