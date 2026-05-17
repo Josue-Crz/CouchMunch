@@ -26,6 +26,8 @@ const DEFAULT_CRAVING = "burger fries and a chocolate shake";
 const COPYRIGHT_YEAR = "2026";
 const GITHUB_REPOSITORY_URL =
   process.env.NEXT_PUBLIC_GITHUB_REPOSITORY_URL || "https://github.com/Josue-Crz/CouchMunch";
+const SESSION_LOCATION_KEY = "couchmunch.sharedLocation";
+const REVERSE_GEOCODING_URL = "https://nominatim.openstreetmap.org/reverse";
 
 const sampleCravings = [
   "spicy ramen and crispy dumplings",
@@ -63,6 +65,15 @@ export default function Home() {
   const [checkingOutId, setCheckingOutId] = useState("");
 
   useEffect(() => {
+    const savedLocation = readSessionLocation();
+
+    if (savedLocation) {
+      setLocation(savedLocation);
+      setLocationInput(savedLocation.label);
+      submitCraving(DEFAULT_CRAVING, savedLocation, savedLocation.label);
+      return;
+    }
+
     submitCraving(DEFAULT_CRAVING);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -76,9 +87,13 @@ export default function Home() {
     [selectedAddOns]
   );
 
-  async function submitCraving(nextCraving = craving) {
+  async function submitCraving(
+    nextCraving = craving,
+    nextLocation = location,
+    nextLocationInput = locationInput
+  ) {
     const cleanedCraving = nextCraving.trim();
-    const requestLocation = normalizeRequestLocation(locationInput, location);
+    const requestLocation = normalizeRequestLocation(nextLocationInput, nextLocation);
 
     if (!cleanedCraving) {
       setError("Add a craving first.");
@@ -147,13 +162,11 @@ export default function Home() {
       }
 
       const position = await getCurrentPositionAcrossBrowsers();
+      const sharedLocation = await createSharedLocation(position);
 
-      setLocation({
-        label: "Current location",
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude
-      });
-      setLocationInput("Current location");
+      setLocation(sharedLocation);
+      setLocationInput(sharedLocation.label);
+      saveSessionLocation(sharedLocation);
     } catch (geoError) {
       setError(getLocationErrorMessage(geoError));
     } finally {
@@ -259,6 +272,7 @@ export default function Home() {
                   className="mt-2 min-h-11 w-full rounded-md border border-stone-300 bg-stone-50 px-3 text-base text-stone-950 outline-none ring-[#ff5a3c]/25 transition focus:border-[#ff5a3c] focus:ring-4"
                   value={locationInput}
                   onChange={(event) => {
+                    clearSessionLocation();
                     setLocationInput(event.target.value);
                     setLocation({ label: event.target.value });
                   }}
@@ -716,6 +730,143 @@ function getCurrentPosition(options) {
   return new Promise((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(resolve, reject, options);
   });
+}
+
+async function createSharedLocation(position) {
+  const latitude = Number(position.coords.latitude);
+  const longitude = Number(position.coords.longitude);
+  const label = await getApproximateLocationLabel({ latitude, longitude });
+
+  return {
+    label,
+    latitude,
+    longitude
+  };
+}
+
+async function getApproximateLocationLabel({ latitude, longitude }) {
+  try {
+    const params = new URLSearchParams({
+      format: "jsonv2",
+      lat: getCoarseCoordinate(latitude),
+      lon: getCoarseCoordinate(longitude),
+      zoom: "10",
+      addressdetails: "1",
+      namedetails: "0"
+    });
+    const language = getBrowserLanguage();
+
+    if (language) {
+      params.set("accept-language", language);
+    }
+
+    const response = await fetch(`${REVERSE_GEOCODING_URL}?${params.toString()}`, {
+      headers: {
+        Accept: "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error("Could not estimate shared location.");
+    }
+
+    const payload = await response.json();
+    const address = payload?.address || {};
+    const city =
+      address.city ||
+      address.town ||
+      address.village ||
+      address.municipality ||
+      address.county ||
+      address.state ||
+      payload?.name;
+    const region =
+      address.state ||
+      address.province ||
+      address.region ||
+      address.state_district ||
+      address.county;
+    const country = address.country;
+
+    if (city && region && city !== region) {
+      return `${city}, ${region}`;
+    }
+
+    if (city && country) {
+      return `${city}, ${country}`;
+    }
+
+    if (region && country) {
+      return `${region}, ${country}`;
+    }
+
+    if (country) {
+      return `Current location, ${country}`;
+    }
+  } catch {
+    return "Current shared location";
+  }
+
+  return "Current shared location";
+}
+
+function getCoarseCoordinate(value) {
+  return Number(value).toFixed(2);
+}
+
+function getBrowserLanguage() {
+  if (typeof navigator === "undefined") {
+    return "";
+  }
+
+  return navigator.languages?.[0] || navigator.language || "";
+}
+
+function readSessionLocation() {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  try {
+    const savedLocation = JSON.parse(window.sessionStorage.getItem(SESSION_LOCATION_KEY));
+
+    if (
+      savedLocation?.label &&
+      Number.isFinite(savedLocation.latitude) &&
+      Number.isFinite(savedLocation.longitude) &&
+      !savedLocation.label.includes("(")
+    ) {
+      return savedLocation;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
+function saveSessionLocation(location) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.sessionStorage.setItem(SESSION_LOCATION_KEY, JSON.stringify(location));
+  } catch {
+    // Session storage can be unavailable in private or restricted browsing modes.
+  }
+}
+
+function clearSessionLocation() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  try {
+    window.sessionStorage.removeItem(SESSION_LOCATION_KEY);
+  } catch {
+    // Session storage can be unavailable in private or restricted browsing modes.
+  }
 }
 
 function getLocationErrorMessage(error) {
