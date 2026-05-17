@@ -124,7 +124,12 @@ export default function Home() {
     }
   }
 
-  function useBrowserLocation() {
+  async function useBrowserLocation() {
+    if (typeof window !== "undefined" && !window.isSecureContext) {
+      setError("Location requires HTTPS. Use the deployed secure site or enter a city or ZIP.");
+      return;
+    }
+
     if (!navigator.geolocation) {
       setError("Browser location is not available.");
       return;
@@ -133,22 +138,27 @@ export default function Home() {
     setGeoLoading(true);
     setError("");
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLocation({
-          label: "Current location",
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
-        });
-        setLocationInput("Current location");
-        setGeoLoading(false);
-      },
-      () => {
-        setError("Location permission was not granted.");
-        setGeoLoading(false);
-      },
-      { enableHighAccuracy: false, timeout: 8000 }
-    );
+    try {
+      const permissionState = await getGeolocationPermissionState();
+
+      if (permissionState === "denied") {
+        setError(getLocationErrorMessage({ code: 1 }));
+        return;
+      }
+
+      const position = await getCurrentPositionAcrossBrowsers();
+
+      setLocation({
+        label: "Current location",
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      });
+      setLocationInput("Current location");
+    } catch (geoError) {
+      setError(getLocationErrorMessage(geoError));
+    } finally {
+      setGeoLoading(false);
+    }
   }
 
   function toggleAddOn(recommendation, addOn) {
@@ -663,4 +673,60 @@ function formatPrice(value) {
     style: "currency",
     currency: "USD"
   }).format(value);
+}
+
+async function getGeolocationPermissionState() {
+  if (!navigator.permissions?.query) {
+    return "unknown";
+  }
+
+  try {
+    const permission = await navigator.permissions.query({ name: "geolocation" });
+    return permission.state;
+  } catch {
+    return "unknown";
+  }
+}
+
+async function getCurrentPositionAcrossBrowsers() {
+  try {
+    return await getCurrentPosition({
+      enableHighAccuracy: false,
+      maximumAge: 300000,
+      timeout: 12000
+    });
+  } catch (firstError) {
+    if (firstError?.code === 1) {
+      throw firstError;
+    }
+
+    try {
+      return await getCurrentPosition({
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 25000
+      });
+    } catch (secondError) {
+      throw secondError || firstError;
+    }
+  }
+}
+
+function getCurrentPosition(options) {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, options);
+  });
+}
+
+function getLocationErrorMessage(error) {
+  switch (error?.code) {
+    case 1:
+      return "Location is blocked for this site. Allow location in your browser or device settings, then refresh CouchMunch.";
+    case 2:
+      return "Your browser could not determine your location. Try again near a window, turn on Wi-Fi, or enter a city or ZIP.";
+    case 3:
+      return "Location lookup timed out. Try again, or enter a city or ZIP.";
+    default:
+      return "Location is unavailable right now. Enter a city or ZIP to keep searching.";
+  }
 }
